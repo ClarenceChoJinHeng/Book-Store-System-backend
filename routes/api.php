@@ -17,6 +17,10 @@ Route::post('/register', [JWTAuthController::class, 'register']);
 Route::post('/login', [JWTAuthController::class, 'login']);
 
 Route::middleware([JwtMiddleware::class])->group(function () {
-    Route::get('user', [JWTAuthController::class, 'getUser']);
-    Route::post('logout', [JWTAuthController::class, 'logout']);
+    Route::get('/user', [JWTAuthController::class, 'getUser']);
+    Route::post('/logout', [JWTAuthController::class, 'logout']);
+    Route::post('/refresh', [JWTAuthController::class, 'refresh']);
 });
+
+// Admin
+// Route::post('/book',[AuthController::class,'book']);

@@ -20,6 +20,7 @@ class JWTAuthController extends Controller
             'username' => 'string|max:255|required|unique:users',
             'email' => 'unique:users|email|max:255|required',
             'password' => [Password::min(8), 'required'],
+            'role' => 'string|required|max:255'
         ]);
 
         // Create a new user instance
@@ -27,6 +28,8 @@ class JWTAuthController extends Controller
         $user->username = $request->input('username');
         $user->email = $request->input("email");
         $user->password = Hash::make($request->input("password"));
+        $user->role = $request->input("role");
+
 
         // Save the user to the database
         $user->save();
@@ -36,6 +39,7 @@ class JWTAuthController extends Controller
             'message' => 'User registered successfully',
         ], 201);
     }
+
     // User login
     public function login(Request $request)
     {
@@ -47,7 +51,7 @@ class JWTAuthController extends Controller
                 return response()->json(['error' => 'Invalid credentials'], 401);
             }
 
-            return response()->json(compact('token')); // compact() makes an associative array and insert the value together with the token.
+            return response()->json(compact('token')); // compact() makes an associative array and insert the value together with the token and return back to the front-end.
         } catch (JWTException $e) {
             return response()->json(['error' => 'Could not create token'], 500);
         }
@@ -68,10 +72,27 @@ class JWTAuthController extends Controller
     }
 
     // User logout
-    public function logout()
+    public function logout(Request $request)
     {
-        JWTAuth::invalidate(JWTAuth::getToken());
-
-        return response()->json(['message' => 'Successfully logged out']);
+        try {
+            $token = JWTAuth::getToken();
+            if ($token) {
+                JWTAuth::invalidate($token);
+            }
+            return response()->json(['message' => 'Successfully logged out']);
+        } catch (JWTException $e) {
+            return response()->json(['error' => 'Failed to logout, please try again'], 500);
+        }
     }
 }
+    // public function refresh()
+    // {
+    //     return $this->respondWithToken(JWTAuth::refresh());
+    // }
+
+    // protected function respondWithToken($token)
+    // {
+    //     return response()->json([
+    //         'token' => $token,
+    //     ]);
+    // }

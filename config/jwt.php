@@ -26,7 +26,7 @@ return [
     */
 
     'secret' => env('JWT_SECRET'),
-    'ttl' => (int) env('JWT_TTL', 60),
+    'ttl' => (int) env('JWT_TTL', 60 * 24),
     'refresh_ttl' => (int) env('JWT_REFRESH_TTL', 20160),
 
     /*
